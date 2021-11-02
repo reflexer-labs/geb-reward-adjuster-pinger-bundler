@@ -300,6 +300,16 @@ contract RewardAdjusterBundlerTest is DSTest {
         );
     }
 
+    function testFail_add_funded_function_invalid_param() public {
+        bundler.modifyParameters(
+            "invalid",
+            0, // position
+            0, // type
+            bytes4("0x21"),
+            address(0x21)
+        );
+    }
+
     function test_remove_funded_function() public {
         test_add_funded_function();
         bundler.modifyParameters(
