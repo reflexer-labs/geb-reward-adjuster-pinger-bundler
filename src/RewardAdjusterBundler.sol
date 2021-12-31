@@ -153,6 +153,7 @@ contract RewardAdjusterBundler {
         require(receiverContract != address(0), "RewardAdjusterBundler/null-receiver-contract");
         require(adjusterType <= 1, "RewardAdjusterBundler/invalid-adjuster-type");
         require(addedFunction[receiverContract][functionName] == 0, "RewardAdjusterBundler/function-already-added");
+        require(fundedFunctionsAmount() < maxFunctions, "RewardAdjusterBundler/function-limit-reached");
 
         addedFunction[receiverContract][functionName] = 1;
         fundedFunctionNonce                           = addition(fundedFunctionNonce, 1);
@@ -205,12 +206,12 @@ contract RewardAdjusterBundler {
           fundedFunction = fundedFunctions[currentFundedFunction];
           if (fundedFunction.adjusterType == 0) {
             try fixedRewardAdjuster.recomputeRewards(fundedFunction.receiverContract, fundedFunction.functionName) {}
-            catch(bytes memory revertReason) {
+            catch(bytes memory /* revertReason */) {
               emit FailedRecomputeReward(fundedFunction.adjusterType, fundedFunction.receiverContract, fundedFunction.functionName);
             }
           } else {
             try minMaxRewardAdjuster.recomputeRewards(fundedFunction.receiverContract, fundedFunction.functionName) {}
-            catch(bytes memory revertReason) {
+            catch(bytes memory /* revertReason */) {
               emit FailedRecomputeReward(fundedFunction.adjusterType, fundedFunction.receiverContract, fundedFunction.functionName);
             }
           }
